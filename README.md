@@ -7,7 +7,7 @@
 <p>In release 1.9.1</p>
 <ul>
 <li>This version of Gerbmerge is based on the fork from https://github.com/provideyourown/gerbmerge
-<li>Added support for KiCAD Gerber and Excellon drill files (see layout.cfg comments for details) of project which are designed in metric units (mm)
+<li>Added support for KiCAD Gerber and Excellon drill files (see layout.cfg comments for details) of projects which are designed in metric units (mm)
 <li>Added support for Seeed Studio requirements to generate an outline for all panelized gerber files. The Seeeds Studio patch is copied from:   https://github.com/space-age-robotics/gerbmerge-patched/commit/5078c7b33439912c465fb33fc0082b82cfac3687#diff-0
 </ul>
 
