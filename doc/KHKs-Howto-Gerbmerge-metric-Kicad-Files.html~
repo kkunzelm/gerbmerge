@@ -1,0 +1,354 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="LibreOffice 3.5  (Linux)">
+	<META NAME="AUTHOR" CONTENT="Karl-Heinz ">
+	<META NAME="CREATED" CONTENT="20150802;19432024">
+	<META NAME="CHANGEDBY" CONTENT="Karl-Heinz ">
+	<META NAME="CHANGED" CONTENT="20150804;12121400">
+	<STYLE TYPE="text/css">
+	<!--
+		@page { margin: 0.79in }
+		P { margin-bottom: 0.1in; line-height: 120% }
+		H2 { margin-top: 0.14in; margin-bottom: 0.08in }
+		H2.western { font-family: "Liberation Sans", sans-serif; font-size: 16pt }
+		H2.cjk { font-family: "Droid Sans"; font-size: 16pt }
+		H2.ctl { font-family: "FreeSans"; font-size: 16pt }
+		A:link { so-language: zxx }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="de-DE" DIR="LTR">
+<H2 CLASS="western">Gerbmerge with support for metric units of Kicad
+Gerber files</H2>
+<P>The excellent tutorials from <A HREF="http://www.instructables.com/member/spaceagerobotics/">spaceagerobotics</A>
+at
+<A HREF="http://www.instructables.com/id/Panelizing-PCBs-for-Seeed-Using-Eagle-Free-Light/?ALLSTEPS">http://www.instructables.com/id/Panelizing-PCBs-for-Seeed-Using-Eagle-Free-Light/?ALLSTEPS</A>
+ and from Ches Koblents
+<A HREF="http://koblents.com/Ches/Original-Work/46-KiCAD---Seeedstudio-Fusion--Getting-Started/">http://koblents.com/Ches/Original-Work/46-KiCAD---Seeedstudio-Fusion--Getting-Started/</A>
+made it a lot easier for me to use Kicad together with gerbmerge to
+panelize a few printed circuit boards which I wanted to submit to
+Seeed Studio. While the tutorial worked fine using the supplied test
+files my Kicad files did not work. The reason was, that I designed my
+PCBs with metric units. Furtunately I found a fork of the original
+gerbmerge program which included metric support already. However,
+still my Kicad files did not work. 
+</P>
+<P>Gerbview (gerbv) coming with my linux distribution (Debian) was
+very handy to convert the metric Gerber files to imperial units, but
+you have to do this layer by layer. While I considered this to be a
+fall-back option I decided to learn, how gerbmerge is working and try
+to fix it on my own. To learn Python was on my agenda for quite some
+time but I had no project, which could motivate me enough. Now
+gerbmerge, well documented and easy enough to read for me, was the
+perfect project to learn Python. 
+</P>
+<P>I started with the gerbmerge fork from
+<A HREF="https://github.com/provideyourown/gerbmerge">https://github.com/provideyourown/gerbmerge</A>.
+First I added support for Seeed Studio from here
+<A HREF="https://github.com/space-age-robotics/gerbmerge-patched">https://github.com/space-age-robotics/gerbmerge-patched</A>.
+Over the next two weeks I spent a few hours to modify gerbmerge to
+panelize my Kicad files. I did not touch the metric routines, which
+were supplied by Scott Daniels (<A HREF="https://github.com/scottdky">https://github.com/scottdky</A>)
+and I hope that I did not change any of his routines accidentially. 
+</P>
+<P>To add support for Kicad files in metric units I added plenty of
+extra „if … else“ code blocks to gerbmerge. It might be not the
+most elegant approach, but I have to admit that I did not have the
+time to understand every details how gerbmerge works and I was happy
+that the program no does what I expect it to do. I learnt on my way
+that Kicad seems to work internally with inches causing some small
+rounding errors. As a side effect I had a lot of drill sizes which
+differed only some 1/100 mm. I decided that for my sparetime use it
+is enough to differenticate drill to 1/10 of a millimeter. Therefore
+I round the drill sizes but I made it configurable in the
+layout.cfg-file. This has the advantage that you can decide on your
+own, whether to round or not to round the drill sizes. The downside
+is that you have to configure it in the layout-file therefore you
+have to read the comments of the layout-file carefully. 
+</P>
+<P>For your convenience I add some metric Gerber samples which were
+saved from Kicad. I also add the configuration file which I used to
+panelize those files (layout-mm-3.3.cfg). 3.3 stands for metric units
+with 3 decimals, by the way. 
+</P>
+<H2 CLASS="western">Kicad Settings for Gerber and Drill Files</H2>
+<P STYLE="margin-bottom: 0in; line-height: 100%">To make a PCB we
+need the different layers of the PCB and also the drill file. The
+layers are stored in the „Gerber“ file format, while the drill
+files are stored in the Excellon file format. T</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><BR>
+</P>
+<P>According to Seeed Studio
+(<A HREF="http://support.seeedstudio.com/knowledgebase/articles/493833-what-is-gerber-file">http://support.seeedstudio.com/knowledgebase/articles/493833-what-is-gerber-file</A>)
+they evaluate only the following files which should be collected in a
+.rar or .zip file:</P>
+<P><BR><BR>
+</P>
+<P STYLE="margin-bottom: 0in; font-variant: normal; font-style: normal; font-weight: normal; line-height: 100%">
+<FONT FACE="Helvetica Neue, Arial, Helvetica, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><BR><FONT FACE="inherit"><B>Extension
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; Layer</B></FONT></FONT></FONT></P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0in; border: none; padding: 0in; font-variant: normal; line-height: 0.18in; orphans: 1">
+	<FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">pcbname.</SPAN></SPAN></FONT></FONT><FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><B>GTL&nbsp;</B></SPAN></FONT></FONT><FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">&nbsp;
+	&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</SPAN></SPAN></FONT></FONT><FONT FACE="Helvetica, Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">Top
+	Copper</SPAN></SPAN></FONT></FONT><FONT FACE="FreeSans"><SPAN LANG="hi-IN"><FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">﻿&nbsp;</SPAN></SPAN></FONT></FONT></SPAN></FONT></P>
+	<LI><P STYLE="margin-bottom: 0in; border: none; padding: 0in; font-variant: normal; line-height: 0.18in; orphans: 1">
+	<FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">pcbname.</SPAN></SPAN></FONT></FONT><FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><B>GTS</B></SPAN></FONT></FONT><FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">&nbsp;
+	&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</SPAN></SPAN></FONT></FONT><FONT FACE="Helvetica, Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">Top
+	Soldermask&nbsp;</SPAN></SPAN></FONT></FONT><FONT FACE="FreeSans"><SPAN LANG="hi-IN"><FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">﻿</SPAN></SPAN></FONT></FONT></SPAN></FONT></P>
+	<LI><P STYLE="margin-bottom: 0in; border: none; padding: 0in; font-variant: normal; font-style: normal; font-weight: normal; line-height: 0.18in; orphans: 1">
+	<FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt">pcbname.<B>GTO</B>&nbsp;
+	&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<FONT FACE="Helvetica, Arial, sans-serif">Top
+	Silkscreen&nbsp;</FONT></FONT></FONT></P>
+	<P STYLE="margin-bottom: 0in; border: none; padding: 0in; line-height: 0.18in; orphans: 1">
+	</P>
+</UL>
+<UL>
+	<LI><P STYLE="margin-bottom: 0in; border: none; padding: 0in; font-variant: normal; line-height: 0.18in; orphans: 1">
+	<FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">pcbname.</SPAN></SPAN></FONT></FONT><FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><B>GBL</B></SPAN></FONT></FONT><FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">&nbsp;
+	&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</SPAN></SPAN></FONT></FONT><FONT FACE="Helvetica, Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">Bottom
+	copper</SPAN></SPAN></FONT></FONT><FONT FACE="FreeSans"><SPAN LANG="hi-IN"><FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">﻿</SPAN></SPAN></FONT></FONT></SPAN></FONT></P>
+</UL>
+<UL>
+	<LI><P STYLE="margin-bottom: 0in; border: none; padding: 0in; font-variant: normal; line-height: 0.18in; orphans: 1">
+	<FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">pcbname.</SPAN></SPAN></FONT></FONT><FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><B>GBS</B></SPAN></FONT></FONT><FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">&nbsp;
+	&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</SPAN></SPAN></FONT></FONT><FONT FACE="Helvetica, Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">Bottom
+	Soldermask:&nbsp;</SPAN></SPAN></FONT></FONT><FONT FACE="FreeSans"><SPAN LANG="hi-IN"><FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">﻿</SPAN></SPAN></FONT></FONT></SPAN></FONT></P>
+	<LI><P STYLE="margin-bottom: 0in; border: none; padding: 0in; font-variant: normal; line-height: 0.18in; orphans: 1">
+	<FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">pcbname.</SPAN></SPAN></FONT></FONT><FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><B>GBO</B></SPAN></FONT></FONT><FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">&nbsp;
+	&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</SPAN></SPAN></FONT></FONT><FONT FACE="Helvetica, Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">Bottom
+	Silkscreen:&nbsp;</SPAN></SPAN></FONT></FONT><FONT FACE="FreeSans"><SPAN LANG="hi-IN"><FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">﻿</SPAN></SPAN></FONT></FONT></SPAN></FONT></P>
+	<LI><P STYLE="margin-bottom: 0in; border: none; padding: 0in; font-variant: normal; line-height: 0.18in; orphans: 1">
+	<FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">pcbname.</SPAN></SPAN></FONT></FONT><FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><B>TXT&nbsp;</B></SPAN></FONT></FONT><FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">&nbsp;
+	&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</SPAN></SPAN></FONT></FONT><FONT FACE="Helvetica, Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">Drills</SPAN></SPAN></FONT></FONT><FONT FACE="FreeSans"><SPAN LANG="hi-IN"><FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">﻿</SPAN></SPAN></FONT></FONT></SPAN></FONT></P>
+	<LI><P STYLE="margin-bottom: 0in; border: none; padding: 0in; font-variant: normal; line-height: 0.18in; orphans: 1">
+	<FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">pcbname.</SPAN></SPAN></FONT></FONT><FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><B>GML/GKO</B></SPAN></FONT></FONT><FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">&nbsp;&nbsp;
+	&nbsp; &nbsp; &nbsp;</SPAN></SPAN></FONT></FONT><FONT FACE="Helvetica, Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">*Board
+	Outline</SPAN></SPAN></FONT></FONT><FONT FACE="FreeSans"><SPAN LANG="hi-IN"><FONT FACE="inherit"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">﻿</SPAN></SPAN></FONT></FONT></SPAN></FONT></P>
+</UL>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><SPAN STYLE="font-variant: normal"><FONT COLOR="#292c33"><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal"><BR></SPAN></SPAN></FONT></FONT></FONT></SPAN>The
+PCB Outline is required. I do not use the output of the edge-cut
+files, but instead I replace use the file which was generated with
+the Seeeds patch and which has the extension .oln. I remove the board
+outline file from gerbmerge and replace it with the .oln file, which
+I rename to *.gml before I add it to the archive file. 
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%">This last step, to
+omit the BoardOutline file with the markings for the individual
+panelized boards and replace it with the general outline file (*.oln)
+from the gerbmerge Seeeds patch, is only my interpretation of Seeed
+Studios online order form where they have a separate selection field
+for Panelized PCBs. I would assume that the extra amount they charge
+for panelized pcbs is caused by the extra step to separate the
+boards. If you separate the boards yourself, like I do, you can save
+this costs. To see the outline of the files use the option
+&quot;CutLineLayers&quot; in the layout.cfg file.</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"># Which layers to
+draw cut lines on. Omit this option or set to 'None' for no</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"># cut lines. Cut
+lines are borders around each job that serve as guides for</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"># cutting the panel
+into individual jobs. Option 'CutLineWidth' sets the</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"># thickness of these
+cut lines.</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%">#</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"># NOTE: Layer names
+are ALL LOWERCASE, even if you define them with uppercase</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"># letters below.</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%">CutLineLayers =
+*topsilkscreen,*bottomsilkscreen</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%">This generates the
+outline of the boards on the silk screens and you can cut along these
+lines. 
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><SPAN STYLE="font-variant: normal"><FONT COLOR="#292c33"><FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 9pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">Y</SPAN></SPAN></FONT></FONT></FONT></SPAN>ou
+can select or deselect the layers easily according to your needs with
+the checkboxes on the left side. I selected the 4.5 format, but did
+not test the 4.6 format so far. However, I would assume that it will
+work, too.</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><BR>
+</P>
+<P><BR><BR>
+</P>
+<P><IMG SRC="KHKs-Howto-Gerbmerge-metric-Kicad-Files_html_a602444.png" NAME="Bild1" ALIGN=LEFT WIDTH=716 HEIGHT=514 BORDER=0>In
+addition we need the drill file:</P>
+<UL>
+	<LI><P>Drills=*.drl</P>
+</UL>
+<P>Select the same unit for the drill file as you selected for the
+schematics. Suppressing the leeding zeros seems to comply with the
+requirements of a lot of PCB services. If you make only a drill file
+(„Bohrdatei“) then the file format selection in the middle column
+has no influence as drill files are always in Excellon format. The
+FAQ of OshPark PCB suggests to use absolute coordinates for the drill
+file. I would assume that this also works for other manufacturers.</P>
+<P><IMG SRC="KHKs-Howto-Gerbmerge-metric-Kicad-Files_html_2b1cc936.png" NAME="Bild2" ALIGN=LEFT WIDTH=716 HEIGHT=314 BORDER=0><BR><BR>
+</P>
+<H2 CLASS="western">Panelizing PCBs for Seeed Studio Using Kicad 
+</H2>
+<P>According to <A HREF="http://www.instructables.com/member/spaceagerobotics/">spaceagerobotics</A>
+at
+<A HREF="http://www.instructables.com/id/Panelizing-PCBs-for-Seeed-Using-Eagle-Free-Light/?ALLSTEPS">http://www.instructables.com/id/Panelizing-PCBs-for-Seeed-Using-Eagle-Free-Light/?ALLSTEPS</A>
+Seeed requires an outline for the entire panel to be present on all
+layers, otherwise, they will offer to change your order for multiple,
+separate boards, which defeats the entire purpose. His patch is
+implemented in my fork of gerbmerge already. 
+</P>
+<P>If you are interested how this is achieved then have a look at the
+diff file of these
+patches:&nbsp;<A HREF="https://github.com/space-age-robotics/gerbmerge-patched/commit/5078c7b33439912c465fb33fc0082b82cfac3687#diff-0">https://github.com/space-age-robotics/gerbmerge-patched/commit/5078c7b33439912c465fb33fc0082b82cfac3687#diff-0</A>
+to the config.py and gerbmerge.py files. 
+</P>
+<P>In order to use gerbmerge you have to edit the configuration file
+layout.cfg. I supplied an example for Kicad files in metric units (=
+layout-mm-3.3.cfg). To make it easier to identify my additions, I use
+my initials as the beginning of my comments (KHK: ).  In my example I
+used a directory („project“ folder) where I save the resulting
+merged-Gerber-files and saved each pcb which is included in a
+separate subdirectory below this „project“ folder. 
+</P>
+<P>Edit the following lines in the layout.cfg file:</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><FONT FACE="Nimbus Mono L, monospace"><FONT SIZE=2>#
+Optional indication of the number of decimal places in input Excellon
+drill</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><FONT FACE="Nimbus Mono L, monospace"><FONT SIZE=2>#
+files. The default is 4 which works for recent versions of Eagle
+(since</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><FONT FACE="Nimbus Mono L, monospace"><FONT SIZE=2>#
+version 4.11r12), as well as Orcad and PCB. Older versions of Eagle
+use 3</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><FONT FACE="Nimbus Mono L, monospace"><FONT SIZE=2>#
+decimal places. </FONT></FONT>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><FONT FACE="Nimbus Mono L, monospace"><FONT SIZE=2>#
+KHK: Kicad drill files in metric units use 3.3 format, which means </FONT></FONT>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><FONT FACE="Nimbus Mono L, monospace"><FONT SIZE=2>#
+that the ExcellonDecimals should be 3 here. </FONT></FONT>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><FONT FACE="Nimbus Mono L, monospace"><FONT SIZE=2>ExcellonDecimals
+= 3</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><FONT FACE="Nimbus Mono L, monospace"><FONT SIZE=2>#
+Units - We must specify whether files use imperial units (inch) or
+metric units (mm)</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><FONT FACE="Nimbus Mono L, monospace"><FONT SIZE=2>MeasurementUnits
+= mm</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><FONT FACE="Nimbus Mono L, monospace"><FONT SIZE=2>#MeasurementUnits
+= inch</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><FONT FACE="Nimbus Mono L, monospace"><FONT SIZE=2>#
+KHK: do we import from KiCAD files which are in metric units? If yes,
+then check here &quot;true&quot; (= 1) and </FONT></FONT>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><FONT FACE="Nimbus Mono L, monospace"><FONT SIZE=2>#
+put the right number of decimals into the setting &quot;ExcellonDecimals&quot;
+a few lines above</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><FONT FACE="Nimbus Mono L, monospace"><FONT SIZE=2>#
+KHK: true = 1, false = 0</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><FONT FACE="Nimbus Mono L, monospace"><FONT SIZE=2>KicadFilesInMetricUnits
+= 1 </FONT></FONT>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><FONT FACE="Nimbus Mono L, monospace"><FONT SIZE=2>#KicadFilesInMetricUnits
+= 0</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><FONT FACE="Nimbus Mono L, monospace"><FONT SIZE=2>#
+KHK: using metric units it does not make sense to use 1/1000 mm as
+drill size. Due to rounding errors in </FONT></FONT>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><FONT FACE="Nimbus Mono L, monospace"><FONT SIZE=2>#
+KHK: KiCAD for example we would get a lot of different drills.</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><FONT FACE="Nimbus Mono L, monospace"><FONT SIZE=2>#
+KHK: I am no PCB expert, but base on my experience it does not make
+much sense to declare drill sizes </FONT></FONT>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><FONT FACE="Nimbus Mono L, monospace"><FONT SIZE=2>#
+KHK: with a precision which is better then 1/10 of a mm.  </FONT></FONT>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><FONT FACE="Nimbus Mono L, monospace"><FONT SIZE=2>#
+KHK: true = 1, false = 0</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><FONT FACE="Nimbus Mono L, monospace"><FONT SIZE=2>roundDrillSize
+= 1</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><FONT FACE="Nimbus Mono L, monospace"><FONT SIZE=2>#roundDrillSize
+= 0</FONT></FONT><BR><BR>
+</P>
+<P>For the other options look at the sample files layout*.cfg which I
+include with my test data.</P>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%">To generate the
+panel with automatic placement of the boards, invoke gerbmerge:</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><BR><FONT FACE="Nimbus Mono L, monospace"><FONT SIZE=2>path/to/python
+path/to/gerbmerge.py panel.layout</FONT></FONT></P>
+<P><BR><BR>
+</P>
+<P>It is also possible to omit the automatic placement and force
+gerbmerge to use your arrangement of the pcbs using a panel.cfg file.
+I did not test this alternative yet as the automatic placement worked
+fine for my projects so far.</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><FONT FACE="Nimbus Mono L, monospace"><FONT SIZE=2>path/to/python
+path/to/gerbmerge.py panel.cfg panel.layout</FONT></FONT><BR><BR>You
+will first be presented with a warning about the lack of warranty, as
+in the first image below.&nbsp; Enter 'Y' to continue. To suppress
+this annoying message edit the file config.py and set the variable
+skipdisclaimer to 1.</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"> 'skipdisclaimer':
+1,              # set to 1 to skip disclaimer prompt</P>
+<P STYLE="margin-bottom: 0in; line-height: 100%"><BR>Have a look at
+the output in your Gerber viewer to make sure that the results are as
+you expect them to be.</P>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+<P STYLE="page-break-before: always">Entscheidung HASL oder ENIG
+Surface Finish</P>
+<P><BR><SPAN STYLE="font-variant: normal"><FONT COLOR="#666666"><FONT FACE="Verdana, Arial, Helvetica, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt"><SPAN STYLE="font-style: normal"><SPAN STYLE="font-weight: normal">There
+are many types of surface finish used for plating the Printed Circuit
+Boards(PCB). E.g. Organic Surface Protectant (OSP), Immersion Silver
+(IAg), Immersion tin, Electroless Nickel with Immersion Gold coating
+(ENIG), and direct gold plating (over nickel). Among them, HASL and
+ENIG have been dominating the market for decades. HASL had been
+famous in the past and ENIG is gaining market nowadays. Due to anti
+lead laws in EU, China, California, etc, demands for ENIG have
+increased in the past few years.</SPAN></SPAN></FONT></FONT></FONT></SPAN></P>
+<P STYLE="margin-bottom: 0.19in; border: none; padding: 0in; font-variant: normal; font-style: normal; font-weight: normal; line-height: 0.16in; orphans: 1">
+<FONT COLOR="#666666"><FONT FACE="Verdana, Arial, Helvetica, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt">HASL
+is less environment friendly than ENIG. Choosing ENIG over HASL,
+reduces the use of lead and emission from flux and fusing oil. HASL
+might seem cheaper than ENIG for 2 layer boards but as we go for more
+layers, the cost for ENIG and HASL plating would be very close to
+each other.<BR><BR>HASL has a excellent solder-ability and has a good
+shelf life. ENIG has excellent corrosion resistance, it is good for
+aluminum wire bonding, excellent for fine-pitch technology, excellent
+solder-ability and excellent shelf life.</FONT></FONT></FONT></P>
+<P STYLE="margin-bottom: 0.19in; border: none; padding: 0in; font-variant: normal; font-style: normal; font-weight: normal; line-height: 0.16in; orphans: 1">
+<FONT COLOR="#666666"><FONT FACE="Verdana, Arial, Helvetica, sans-serif"><FONT SIZE=1 STYLE="font-size: 8pt">The
+first picture is from one of my HASL plated boards and the second one
+is from one of my ENIG plated board. Sorry, the quality of the
+pictures are not good.</FONT></FONT></FONT></P>
+<P><BR><BR><BR>
+</P>
+</BODY>
+</HTML>

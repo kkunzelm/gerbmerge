@@ -1,0 +1,9 @@
+KHK-RF-Mixer*rotated90 0.000 0.000
+KHK-SideToneAndCWGen*rotated90 0.000 50.000
+KHK-RXTX-Switch*rotated90 40.000 0.000
+KHK-OutputAudioAmp*rotated90 80.000 0.000
+KHK-MicAmp*rotated90 120.000 0.000
+KHK-IF-Mixer-Mod-Dem*rotated90 80.000 50.000
+KHK-RxAudioPreAmp*rotated90 120.000 50.000
+KHK-Crystal-Filter*rotated90 160.000 0.000
+KHK-BFO*rotated90 160.000 50.000
