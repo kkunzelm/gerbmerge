@@ -169,14 +169,13 @@ def writeApertures(fid, usedDict):
 def writeGerberFooter(fid):
   fid.write('M02*\n')
 
-def writeExcellonHeader(fid):
+def writeExcellonHeaderStart(fid):
   if config.Config['measurementunits'] == 'mm':            	    # KHK for layout.cfg file
     if config.Config['kicadfilesinmetricunits'] == 1:                # KHK for Kicad metric file support
 	fid.write( \
 """M48
-METRIC,000.000             
+METRIC,TZ
 """)
-        fid.write('%\n')	 
     else:						            # mm but not Kicad ... like in version 1.9.  
 	fid.write( \
 """M48
@@ -184,12 +183,22 @@ METRIC,0000.00
 """)
         fid.write('%\n')
 
+def writeExcellonHeaderEnd(fid):
+  if config.Config['measurementunits'] == 'mm':            	    # KHK for layout.cfg file
+        fid.write('%\n')
+        fid.write( \
+"""G90
+G05
+""")
 
 def writeExcellonFooter(fid):
   fid.write('M30\n')
 
 def writeExcellonTool(fid, tool, size):
   fid.write('%sC%f\n' % (tool, size))
+
+def writeExcellonToolStart(fid, tool):
+  fid.write('%s\n' % tool)
 
 def writeFiducials(fid, drawcode, OriginX, OriginY, MaxXExtent, MaxYExtent):
   """Place fiducials at arbitrary points. The FiducialPoints list in the config specifies
@@ -743,8 +752,7 @@ def merge(opts, args, gui = None):
   #print 'Writing %s ...' % fullname
   fid = file(fullname, 'wt')
 
-  writeExcellonHeader(fid)
-
+  writeExcellonHeaderStart(fid)
   # Ensure each one of our tools is represented in the tool list specified
   # by the user.
   for tool in Tools:
@@ -755,8 +763,18 @@ def merge(opts, args, gui = None):
       
     writeExcellonTool(fid, tool, size)
 
+
+  writeExcellonHeaderEnd(fid)
+
+  for tool in Tools:
+    try:
+      size = config.GlobalToolMap[tool]
+    except:
+      raise RuntimeError, "INTERNAL ERROR: Tool code %s not found in global tool map" % tool
+
     #for row in Layout:
     #  row.writeExcellon(fid, size)
+    writeExcellonToolStart(fid, tool)
     for job in Place.jobs:
         job.writeExcellon(fid, size)
   
